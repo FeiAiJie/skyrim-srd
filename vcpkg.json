@@ -23,5 +23,9 @@
     }
   },
   "default-features": [ "plugin" ],
-  "builtin-baseline": "10ceb139a610ebf3c6aa49cdc4a4b7f3db5d3f2b"
+  "builtin-baseline": "10ceb139a610ebf3c6aa49cdc4a4b7f3db5d3f2b",
+  "overrides": [
+    { "name": "fmt", "version": "10.2.1" },
+    { "name": "spdlog", "version": "1.12.0" }
+  ]
 }
