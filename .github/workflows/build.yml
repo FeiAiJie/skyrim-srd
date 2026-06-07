@@ -37,6 +37,13 @@ jobs:
         run: |
           "VCPKG_BINARY_SOURCES=clear;files,C:/vcpkg-cache,readwrite" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
+      # vcpkg_fixup_pkgconfig in this baseline tries to download pkgconf-1~2.1.0-1
+      # from MSYS2 mirrors, which return 404. Provide pkg-config via choco so vcpkg
+      # finds it in PATH and skips the MSYS2 download entirely.
+      - name: Install pkg-config
+        shell: pwsh
+        run: choco install pkgconfiglite --yes --no-progress
+
       - name: Configure CMake
         shell: pwsh
         run: cmake --preset skyrim
