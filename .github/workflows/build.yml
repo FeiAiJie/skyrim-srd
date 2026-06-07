@@ -9,6 +9,7 @@ on:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  VCPKG_BINARY_SOURCES: "clear;files,C:/vcpkg-cache,readwrite"
 
 jobs:
   build:
@@ -17,10 +18,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cache vcpkg packages
+      - name: Cache vcpkg binary packages
         uses: actions/cache@v4
         with:
-          path: C:\Users\runneradmin\AppData\Local\vcpkg\archives
+          path: C:/vcpkg-cache
           key: vcpkg-${{ hashFiles('vcpkg.json', 'cmake/ports/**') }}
           restore-keys: vcpkg-
 
@@ -28,13 +29,6 @@ jobs:
         uses: lukka/run-vcpkg@v11
         with:
           vcpkgGitCommitId: 53bef8994c541b6561884a8395ea35715ece75db
-
-      - name: Diagnostics
-        shell: pwsh
-        run: |
-          echo "VCPKG_ROOT=$env:VCPKG_ROOT"
-          cmake --version
-          & "$env:VCPKG_ROOT\vcpkg.exe" version
 
       - name: Configure CMake
         shell: pwsh
