@@ -10,7 +10,10 @@
     "plugin": {
       "description": "Build the SKSE plugin.",
       "dependencies": [
-        "commonlibsse-ng",
+        {
+          "name": "commonlibsse-ng",
+          "default-features": false
+        },
         "directxtk",
         "mergemapper",
         "rapidxml",
