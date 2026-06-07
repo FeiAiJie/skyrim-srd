@@ -9,7 +9,6 @@ on:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  VCPKG_BINARY_SOURCES: "clear;files,C:/vcpkg-cache,readwrite"
 
 jobs:
   build:
@@ -29,6 +28,14 @@ jobs:
         uses: lukka/run-vcpkg@v11
         with:
           vcpkgGitCommitId: 53bef8994c541b6561884a8395ea35715ece75db
+
+      # lukka/run-vcpkg sets VCPKG_BINARY_SOURCES=clear;x-gha,readwrite which
+      # requires ACTIONS_RUNTIME_TOKEN/ACTIONS_CACHE_URL in the vcpkg subprocess.
+      # Override it here to use a plain filesystem cache instead.
+      - name: Override vcpkg binary cache to filesystem
+        shell: pwsh
+        run: |
+          "VCPKG_BINARY_SOURCES=clear;files,C:/vcpkg-cache,readwrite" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Configure CMake
         shell: pwsh
