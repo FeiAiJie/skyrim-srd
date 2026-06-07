@@ -1,0 +1,33 @@
+name: Build
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-2022
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgGitCommitId: 53bef8994c541b6561884a8395ea35715ece75db
+
+      - name: Configure CMake
+        run: cmake --preset skyrim
+
+      - name: Build
+        run: cmake --build build/skyrim --config Release
+
+      - name: Upload DLL
+        uses: actions/upload-artifact@v4
+        with:
+          name: SoundRecordDistributor
+          path: build/skyrim/Release/SoundRecordDistributor.dll
+          if-no-files-found: error

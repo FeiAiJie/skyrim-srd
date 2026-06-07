@@ -94,13 +94,25 @@ DataStorage::ScanConfigDirectory()
 
 		const auto path = entry.path().string();
 
+		// Detect usvfs B-tree path corruption: a corrupt node embeds control
+		// characters in the returned path string. The filename component is
+		// still intact, so reconstruct a clean Data\ path when this occurs.
+		std::string insertPath = path;
+		for (unsigned char c : path) {
+			if (c < 0x20) {
+				insertPath = std::string(folder) + entry.path().filename().string();
+				logger::warn("Corrupt VFS path detected, using clean path: {}", insertPath);
+				break;
+			}
+		}
+
 		// Old logic: plugin configs contain ".es"
 		if (stem.contains(".es")) {
-			logger::info("Found plugin-specific config: {}", path);
-			pluginConfigs.insert(path);
+			logger::info("Found plugin-specific config: {}", insertPath);
+			pluginConfigs.insert(insertPath);
 		} else {
-			logger::info("Found general config: {}", path);
-			generalConfigs.insert(path);
+			logger::info("Found general config: {}", insertPath);
+			generalConfigs.insert(insertPath);
 		}
 	}
 
